@@ -21,8 +21,8 @@ class Node:
 def AddNeighbour(n1, n2):
     if n2 in n1.neighbours:
         return False
-    else:
-        return True
+    n1.neighbours.append(n2)
+    return True
 
 import math
 def Distance(n1, n2):
