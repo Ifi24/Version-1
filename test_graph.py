@@ -61,8 +61,8 @@ n = G.GetClosest(8, 19)
 print(n.name)  # La respuesta debe ser "B"
 
 print("Probando el grafo...")
-G.PlotNode("C")
-G.Plot()
+#G.PlotNode("C")
+#G.Plot()
 
 def test_load_graph():
    with open("filename.txt", "r") as f:
@@ -71,7 +71,7 @@ def test_load_graph():
        print("Graph loaded successfully!")
        print("Nodes:", [n.name for n in g.nodes])
        print("Segments:", [(s.name, s.origin, s.destination) for s in g.segments])
-       g.Plot()
+       #g.Plot()
    else:
        print("Failed to load graph")
 
