@@ -4,10 +4,10 @@ class Segment:
        self.name = name
        self.origin = origin
        self.destination = destination
-       self.cost = self.calcular_coste()
+       self.cost = self.calcular_cost()
 
 
-   def calcular_coste(self):
+   def calcular_cost(self):
        dx = self.destination.x - self.origin.x
        dy = self.destination.y - self.origin.y
        return (dx ** 2 + dy ** 2) ** 0.5

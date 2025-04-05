@@ -11,24 +11,17 @@ def HaversineDistance(lat1, lon1, lat2, lon2):
     return c * R
 
 #paso 1
-class Node:
-    def __init__(self, name, x, y):
-        self.name = name
-        self.x = x
-        self.y = y
-        self.neighbours = []
-
-def AddNeighbour(n1, n2):
-    if n2 in n1.neighbours:
-        return False
-    n1.neighbours.append(n2)
-    return True
-
 import math
+class Node:
+    def __init__(self, name, x ,y):
+        self.name = name
+        self.x = float(x)
+        self.y = float(y)
+        self.neighbors = []
+    def AddNeighbor (self, n2):
+        if n2 in self.neighbors:
+           return False
+        self.neighbors.append(n2)
+        return True
 def Distance(n1, n2):
-    a = ((n2.x) - (n1.x)) ** 2
-    b = ((n2.y) - (n1.y)) ** 2
-    d = math.sqrt(a + b)
-    return d
-
-#paso 2
+    return math.sqrt((n1.x - n2.x) ** 2 + (n1.y - n2.y) ** 2)
