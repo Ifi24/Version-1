@@ -29,6 +29,16 @@ class GraphApp:
 
         tk.Label(left_frame, text="--- Editar grafo ---", font=("Arial", 10, "bold")).pack(pady=5)
 
+        # Ver vecinos
+        self.node_entry = tk.Entry(self.root)
+        self.node_entry.pack(pady=5)
+
+        self.neighbor_button = tk.Button(self.root, text="Mostrar vecinos", command=self.show_neighbors)
+        self.neighbor_button.pack(pady=5)
+
+        self.neighbor_label = tk.Label(self.root, text="")
+        self.neighbor_label.pack(pady=5)
+
         # Añadir nodo
         self.node_name_entry = tk.Entry(left_frame)
         self.node_name_entry.pack()
@@ -229,10 +239,12 @@ class GraphApp:
 
         try:
             with open(file_path, "w") as f:
+                f.write("#nodes\n")
                 for node in self.graph.nodes:
-                    f.write(f"n {node.name} {node.x} {node.y}\n")
+                    f.write(f"{node.name},{node.x},{node.y}\n")
+                f.write("\n#segments\n")
                 for seg in self.graph.segments:
-                    f.write(f"s {seg.name} {seg.origin.name} {seg.destination.name}\n")
+                    f.write(f"{seg.name},{seg.origin.name},{seg.destination.name}\n")
 
             self.output_text.insert(tk.END, f"Grafo guardado en {file_path}\n")
         except Exception as e:
