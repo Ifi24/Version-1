@@ -9,14 +9,14 @@ class Graph:
         self.segments = []
 
 
-    def AddNode(self, node): # añade un node, versión más rudimetaria que la que hay en interface.py
+    def AddNode(self, node): # añade un node, versión solo para usar en graph.py
         if node in self.nodes:
             return False
         self.nodes.append(node)
         return True
 
 
-    def AddSegment(self, name, nameoriginNode, namedestinationNode):  # No se pasa 'self' explícitamente, versión más básica
+    def AddSegment(self, name, nameoriginNode, namedestinationNode):  # No se pasa 'self' explícitamente, versión solo para usar en graph.py
         origin = next((n for n in self.nodes if n.name == nameoriginNode), None)
         destination = next((n for n in self.nodes if n.name == namedestinationNode), None)
 
@@ -66,26 +66,25 @@ class Graph:
         return plt.subplots()
 
 
-    def PlotNode(self, nameorigin): # hace el plot de los nodos
+    def PlotNode(self, nameorigin): # hace el plot de los nodos vecinos
         origin = next((n for n in self.nodes if n.name == nameorigin), None)
         if not origin:
             return False
 
-        plt.figure(figsize=(8, 6))
+        fig, ax = plt.subplots(figsize=(8, 6))
         for segment in self.segments:
             if segment.origin == origin or segment.destination == origin:
                 x_values = [segment.origin.x, segment.destination.x]
                 y_values = [segment.origin.y, segment.destination.y]
 
                 # Dibuja flechas rojas entre los nodos
-                plt.annotate('', xy=(segment.destination.x, segment.destination.y),
-                             xytext=(segment.origin.x, segment.origin.y),
-                             arrowprops=dict(arrowstyle='->', color='blue', lw=2))
-
+                ax.annotate('', xy=(segment.destination.x, segment.destination.y),
+                    xytext=(segment.origin.x, segment.origin.y),
+                    arrowprops=dict(arrowstyle='->', color='blue', lw=2))
 
                 mid_x = (segment.origin.x + segment.destination.x) / 2
                 mid_y = (segment.origin.y + segment.destination.y) / 2
-                plt.text(mid_x, mid_y, f"{segment.cost:.1f}", fontsize=10, color='black')
+                ax.text(mid_x, mid_y, f"{segment.cost:.1f}", fontsize=10, color='black')
 
         # Dibuja los nodos
         for node in self.nodes:
@@ -94,43 +93,16 @@ class Graph:
                 color = 'blue'
             elif node in origin.neighbors:
                 color = 'green'
-            plt.scatter(node.x, node.y, color=color, s=100)
-            plt.text(node.x, node.y, node.name, fontsize=12)
+            ax.scatter(node.x, node.y, color=color, s=100)
+            ax.text(node.x, node.y, node.name, fontsize=12)
 
-        plt.title('Gráfico de nodos y segmentos')
-        plt.grid(True, color='red')
+        ax.set_title('Gráfico de nodos y segmentos vecinos')
+        ax.grid(True, color='red')
+        fig.tight_layout()
         plt.show()
         return True
-
-    def LoadGraphFromFile(graph_data): 
-        G = Graph()
-
-        with open('graph_data.txt', 'r') as file:
-            lines = file.readlines()
-
-        # Read nodes
-        for line in lines:
-            if line.startswith("#") or not line.strip():
-                continue
-            parts = line.split(',')
-            if len(parts) == 3:
-                name, x, y = parts
-                x, y = float(x), float(y)
-                G.AddNode(Node(name.strip(), x, y))
-
-        # Read segments
-        for line in lines:
-            if line.startswith("#") or not line.strip():
-                continue
-            parts = line.split(',')
-            if len(parts) == 3:
-                name, origin, destination = parts
-                G.AddSegment(name.strip(), origin.strip(), destination.strip())
-
-
-        return G
    
-    def LoadFromFile(self, filename):
+    def LoadFromFile(self, filename): # lee y categoriza los datos de los archivos
         with open(filename, 'r') as f:
             section = None
             for line in f:
@@ -144,14 +116,14 @@ class Graph:
                     section = 'segments'
                     continue
 
-
+                # lee los nodos
                 if section == 'nodes':
                     parts = line.split(',')
                     if len(parts) == 3:
                         name, x, y = parts
                         self.AddNode(Node(name, float(x), float(y)))
 
-
+                #lee los segmentos
                 elif section == 'segments':
                     parts = line.split(',')
                     seg_name, origin, destination = parts[:3]
@@ -160,36 +132,13 @@ class Graph:
 
         return True
     
-    def GetNodeByName(self, name):
+    def GetNodeByName(self, name): # encuentra el nodo por su nombre
         for node in self.nodes:
             if node.name == name:
                 return node
         return None
     
-def LoadGraphFromFile(filename):
-    G = Graph()
-    with open(filename, 'r') as file:
-        lines = file.readlines()
-    
-    LeeNodo = True  # Flag to differentiate nodes from segments
-    for line in lines:
-        line = line.strip()
-        if line[0] == "#" or not line:
-            continue     #Si la línea empieza con un # o está vacía, el programa salta esa línea y no ejecuta el resto del código en esa iteración del bucle
-        if "Segments" in line:
-            LeeNodo = False
-            continue
-    
-        parts = line.split(',')
-        if LeeNodo and len(parts) == 3:
-            name, x, y = parts
-            G.AddNode(Node(name.strip(), float(x), float(y)))
-        elif not LeeNodo and len(parts) == 3:
-            name, origin, destination = parts
-            G.AddSegment(name.strip(), origin.strip(), destination.strip())
 
-
-    return G
     
 
     

@@ -60,7 +60,7 @@ print(n.name)  # La respuesta debe ser "J"
 n = G.GetClosest(8, 19)
 print(n.name)  # La respuesta debe ser "B"
 
-print("Probando el grafo...")
+print("Probando el gráfico...")
 #G.PlotNode("C")
 #G.Plot()
 

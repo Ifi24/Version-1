@@ -27,7 +27,7 @@ class GraphApp:
         self.output_text = tk.Text(left_frame, height=8, width=30)
         self.output_text.pack(pady=5)
 
-        tk.Label(left_frame, text="--- Editar grafo ---", font=("Arial", 10, "bold")).pack(pady=5)
+        tk.Label(left_frame, text="--- Editar gráfico ---", font=("Arial", 10, "bold")).pack(pady=5)
 
         # Ver vecinos
         self.node_entry = tk.Entry(self.root)
@@ -73,8 +73,8 @@ class GraphApp:
         tk.Button(left_frame, text="Eliminar nodo", command=self.delete_node).pack(pady=5)
 
         # Crear nuevo grafico y guardar
-        tk.Button(left_frame, text="Nuevo grafo", command=self.new_graph).pack(pady=5)
-        tk.Button(left_frame, text="Guardar grafo", command=self.save_graph).pack(pady=5)
+        tk.Button(left_frame, text="Nuevo gráfico", command=self.new_graph).pack(pady=5)
+        tk.Button(left_frame, text="Guardar gráfico", command=self.save_graph).pack(pady=5)
 
         # Marco derecho
         right_frame = tk.Frame(root)
@@ -99,7 +99,7 @@ class GraphApp:
             self.ax.plot(node.x, node.y, 'o')  # punto simple
             self.ax.text(node.x, node.y, node.name, fontsize=8)
 
-        self.ax.set_title("Visualización del grafo")
+        self.ax.set_title("Visualización del gráfico")
         self.ax.set_xlabel("X")
         self.ax.set_ylabel("Y")
         self.ax.grid(True)
@@ -140,6 +140,8 @@ class GraphApp:
             neighbors = [n.name for n in node.neighbors]
             output = f"Vecinos de {node_name}: {', '.join(neighbors)}\n"
             self.output_text.insert(tk.END, output)
+            # llama a PlotNode para mostrar el gráfico de los vecinos en una ventana nueva
+            self.graph.PlotNode(node_name)
         else:
             messagebox.showinfo("No encontrado", f"No se encontró el nodo '{node_name}'.")
     
@@ -211,12 +213,12 @@ class GraphApp:
     
     def new_graph(self): # crea un nuevo gráfico
         self.graph = Graph()
-        self.output_text.insert(tk.END, "Nuevo grafo creado.\n")
+        self.output_text.insert(tk.END, "Nuevo gráfico creado.\n")
         self.draw_graph()
 
     def save_graph(self): # guarda el gráfico editado o dibujado en formato .txt
         if not self.graph:
-            messagebox.showwarning("Advertencia", "No hay grafo para guardar.")
+            messagebox.showwarning("Advertencia", "No hay gráfico para guardar.")
             return
 
         file_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text Files", "*.txt")])
@@ -233,7 +235,7 @@ class GraphApp:
                 for seg in self.graph.segments:
                     f.write(f"{seg.name},{seg.origin.name},{seg.destination.name}\n")
 
-            self.output_text.insert(tk.END, f"Grafo guardado en {file_path}\n")
+            self.output_text.insert(tk.END, f"Gráfico guardado en {file_path}\n")
 
         except Exception as e:
             messagebox.showerror("Error", f"No se pudo guardar el archivo:\n{e}")
