@@ -14,7 +14,7 @@ class GraphApp:
         self.graph = None
         self.figure, self.ax = plt.subplots()
 
-        # marco derecho para los botones
+        # Marco derecho para los botones
         left_frame = tk.Frame(root, padx=10, pady=10)
         left_frame.pack(side=tk.LEFT, fill=tk.Y)
 
@@ -72,11 +72,11 @@ class GraphApp:
 
         tk.Button(left_frame, text="Eliminar nodo", command=self.delete_node).pack(pady=5)
 
-        # crear nuevo grafico y guardar
+        # Crear nuevo grafico y guardar
         tk.Button(left_frame, text="Nuevo grafo", command=self.new_graph).pack(pady=5)
         tk.Button(left_frame, text="Guardar grafo", command=self.save_graph).pack(pady=5)
 
-        # marco derecho
+        # Marco derecho
         right_frame = tk.Frame(root)
         right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
 
@@ -84,72 +84,56 @@ class GraphApp:
         self.canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
         self.canvas.mpl_connect("button_press_event", self.on_plot_click)
 
-    def on_plot_click(self, event):
-        if not self.graph or event.inaxes != self.ax:
-            return
-
-        clicked_x, clicked_y = event.xdata, event.ydata
-        tolerance = 0.1
-
-        for node in self.graph.nodes:
-            dx = node.x - clicked_x
-            dy = node.y - clicked_y
-            distance = (dx**2 + dy**2)**0.5
-
-            if distance < tolerance:
-                neighbors = [n.name for n in node.neighbors]
-                output = f"Vecinos de {node.name}: {', '.join(neighbors)}\n"
-                self.output_text.insert(tk.END, output)
-                break
-
-    def draw_graph(self):
+    def draw_graph(self): # dibuja el gráfico
         if not self.graph:
             return
 
         self.ax.clear()
-        for segment in self.graph.segments:
+        for segment in self.graph.segments: # dibuja un segmento
             x = [segment.origin.x, segment.destination.x]
             y = [segment.origin.y, segment.destination.y]
             self.ax.plot(x, y, marker="o")
             self.ax.text(segment.origin.x, segment.origin.y, segment.origin.name, fontsize=8)
             self.ax.text(segment.destination.x, segment.destination.y, segment.destination.name, fontsize=8)
-        for node in self.graph.nodes:
-            self.ax.plot(node.x, node.y, 'o')  # simple dot
+
+        for node in self.graph.nodes: # dibuja un nodo
+            self.ax.plot(node.x, node.y, 'o')  # punto simple
             self.ax.text(node.x, node.y, node.name, fontsize=8)
+
         self.ax.set_title("Visualización del grafo")
         self.ax.set_xlabel("X")
         self.ax.set_ylabel("Y")
         self.ax.grid(True)
         self.canvas.draw()
 
-    def show_example_graph(self):
+    def show_example_graph(self): # muestra el gráfico de ejemplo del paso 3
         self.graph = CreateGraph_1()
         self.output_text.insert(tk.END, "Ejemplo cargado.\n")
         self.draw_graph()
 
-    def show_invented_graph(self):
+    def show_invented_graph(self): # muestra un gráfico nuestro inventado, guardado en el archivo filename.txt
         self.graph = Graph()
         if self.graph.LoadFromFile("filename.txt"):
-            self.output_text.insert(tk.END, "Grafo inventado cargado desde 'filename.txt'\n")
+            self.output_text.insert(tk.END, "Gráfico inventado cargado desde 'filename.txt'\n")
             self.draw_graph()
         else:
             messagebox.showerror("Error", "No se pudo cargar 'filename.txt'.")
 
-    def load_graph_file(self):
-        file_path = filedialog.askopenfilename(title="Seleccionar archivo de grafo", filetypes=[("Text Files", "*.txt")])
+    def load_graph_file(self): # carga el archivo .txt del ordenador
+        file_path = filedialog.askopenfilename(title="Seleccionar archivo de gráfico", filetypes=[("Text Files", "*.txt")])
         if file_path:
             self.graph = Graph()
             if self.graph.LoadFromFile(file_path):
-                self.output_text.insert(tk.END, f"Grafo cargado desde {file_path}\n")
+                self.output_text.insert(tk.END, f"Gráfico cargado desde {file_path}\n")
                 self.draw_graph()
             else:
                 messagebox.showerror("Error", "No se pudo cargar el archivo.")
 
-    def show_neighbors(self):
+    def show_neighbors(self): # muestra los nodos vecinos
         if not self.graph:
-            messagebox.showwarning("Advertencia", "Carga un grafo primero.")
+            messagebox.showwarning("Advertencia", "Carga un gráfico primero.")
             return
-
+        
         node_name = self.node_entry.get().strip()
         node = self.graph.GetNodeByName(node_name)
 
@@ -160,10 +144,11 @@ class GraphApp:
         else:
             messagebox.showinfo("No encontrado", f"No se encontró el nodo '{node_name}'.")
     
-    def add_node(self):
+    def add_node(self): # añade los nuevos nodos al gráfico y al archivo .txt
         if not self.graph:
             self.graph = Graph()
         name = self.node_name_entry.get().strip()
+
         try:
             x = float(self.node_x_entry.get())
             y = float(self.node_y_entry.get())
@@ -171,10 +156,11 @@ class GraphApp:
             self.graph.AddNode(node)
             self.output_text.insert(tk.END, f"Nodo '{name}' añadido.\n")
             self.draw_graph()
+
         except ValueError:
             messagebox.showerror("Error", "Coordenadas inválidas.")
     
-    def add_segment(self):
+    def add_segment(self): # añade los nuevos segmentos al gráfico y al archivo .txt
         if not self.graph:
             return
 
@@ -190,13 +176,14 @@ class GraphApp:
             self.output_text.insert(tk.END, f"Segmento '{segment_name}' añadido.\n")
             self.draw_graph()
             print("Current segments:")
+
             for seg in self.graph.segments:
                 print(f"{seg.name}: {seg.origin.name} -> {seg.destination.name}")
         
         else:
             messagebox.showerror("Error", "Nodo origen o destino no encontrado.")
 
-    def delete_node(self):
+    def delete_node(self): # elimina el nodo seleccionado
         if not self.graph:
             return
 
@@ -223,12 +210,12 @@ class GraphApp:
         else:
             messagebox.showinfo("No encontrado", f"No se encontró el nodo '{node_name}'.")
     
-    def new_graph(self):
+    def new_graph(self): # crea un nuevo gráfico
         self.graph = Graph()
         self.output_text.insert(tk.END, "Nuevo grafo creado.\n")
         self.draw_graph()
 
-    def save_graph(self):
+    def save_graph(self): # guarda el gráfico editado o dibujado en formato .txt
         if not self.graph:
             messagebox.showwarning("Advertencia", "No hay grafo para guardar.")
             return
@@ -236,7 +223,8 @@ class GraphApp:
         file_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text Files", "*.txt")])
         if not file_path:
             return
-
+        
+        # edita el archivo del gráfico de acuerdo al formato que queremos
         try:
             with open(file_path, "w") as f:
                 f.write("#nodes\n")
@@ -247,6 +235,7 @@ class GraphApp:
                     f.write(f"{seg.name},{seg.origin.name},{seg.destination.name}\n")
 
             self.output_text.insert(tk.END, f"Grafo guardado en {file_path}\n")
+            
         except Exception as e:
             messagebox.showerror("Error", f"No se pudo guardar el archivo:\n{e}")
 

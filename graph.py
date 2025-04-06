@@ -4,26 +4,24 @@ import matplotlib.pyplot as plt
 
 
 class Graph:
-    def __init__(self):
+    def __init__(self): # inicia la clase Graph
         self.nodes = []
         self.segments = []
 
 
-    def AddNode(self, node):
+    def AddNode(self, node): # añade un node, versión más rudimetaria que la que hay en interface.py
         if node in self.nodes:
             return False
         self.nodes.append(node)
         return True
 
 
-    def AddSegment(self, name, nameoriginNode, namedestinationNode):  # No se pasa 'self' explícitamente
+    def AddSegment(self, name, nameoriginNode, namedestinationNode):  # No se pasa 'self' explícitamente, versión más básica
         origin = next((n for n in self.nodes if n.name == nameoriginNode), None)
         destination = next((n for n in self.nodes if n.name == namedestinationNode), None)
 
-
         if not origin or not destination:
             return False
-
 
         # Aquí se pasa correctamente el objeto origin y destination a Segment
         segment = Segment(name, origin, destination)
@@ -32,10 +30,9 @@ class Graph:
         return True
 
 
-    def GetClosest(self, x, y):
+    def GetClosest(self, x, y): # encuentra los nodos más cercanos
             closest_node = None
             min_distance = float('inf')
-
 
             for node in self.nodes:
                 d = ((node.x - x) ** 2 + (node.y - y) ** 2) ** 0.5
@@ -43,11 +40,10 @@ class Graph:
                     min_distance = d
                     closest_node = node
 
-
             return closest_node
 
 
-    def Plot(self):
+    def Plot(self): # hace el plot del gráfico
         plt.figure(figsize=(8, 6))
         for segment in self.segments:
             x_values = [segment.origin.x, segment.destination.x]
@@ -60,11 +56,9 @@ class Graph:
             mid_y = (segment.origin.y + segment.destination.y) / 2
             plt.text(mid_x, mid_y, f"{segment.cost:.1f}", fontsize=10, color='red')
 
-
         for node in self.nodes:
             plt.scatter(node.x, node.y, color='red', s=100)
             plt.text(node.x, node.y, node.name, fontsize=12)
-
 
         plt.title("Gráfico con nodos y segmentos")
         plt.grid(True)
@@ -72,18 +66,16 @@ class Graph:
         return plt.subplots()
 
 
-    def PlotNode(self, nameorigin):
+    def PlotNode(self, nameorigin): # hace el plot de los nodos
         origin = next((n for n in self.nodes if n.name == nameorigin), None)
         if not origin:
             return False
-
 
         plt.figure(figsize=(8, 6))
         for segment in self.segments:
             if segment.origin == origin or segment.destination == origin:
                 x_values = [segment.origin.x, segment.destination.x]
                 y_values = [segment.origin.y, segment.destination.y]
-
 
                 # Dibuja flechas rojas entre los nodos
                 plt.annotate('', xy=(segment.destination.x, segment.destination.y),
@@ -95,7 +87,6 @@ class Graph:
                 mid_y = (segment.origin.y + segment.destination.y) / 2
                 plt.text(mid_x, mid_y, f"{segment.cost:.1f}", fontsize=10, color='black')
 
-
         # Dibuja los nodos
         for node in self.nodes:
             color = 'gray'
@@ -106,20 +97,16 @@ class Graph:
             plt.scatter(node.x, node.y, color=color, s=100)
             plt.text(node.x, node.y, node.name, fontsize=12)
 
-
         plt.title('Gráfico de nodos y segmentos')
         plt.grid(True, color='red')
         plt.show()
         return True
 
-
-    def LoadGraphFromFile(graph_data):
+    def LoadGraphFromFile(graph_data): 
         G = Graph()
-
 
         with open('graph_data.txt', 'r') as file:
             lines = file.readlines()
-
 
         # Read nodes
         for line in lines:
@@ -130,7 +117,6 @@ class Graph:
                 name, x, y = parts
                 x, y = float(x), float(y)
                 G.AddNode(Node(name.strip(), x, y))
-
 
         # Read segments
         for line in lines:
