@@ -82,7 +82,6 @@ class GraphApp:
 
         self.canvas = FigureCanvasTkAgg(self.figure, master=right_frame)
         self.canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
-        self.canvas.mpl_connect("button_press_event", self.on_plot_click)
 
     def draw_graph(self): # dibuja el gráfico
         if not self.graph:
@@ -235,7 +234,7 @@ class GraphApp:
                     f.write(f"{seg.name},{seg.origin.name},{seg.destination.name}\n")
 
             self.output_text.insert(tk.END, f"Grafo guardado en {file_path}\n")
-            
+
         except Exception as e:
             messagebox.showerror("Error", f"No se pudo guardar el archivo:\n{e}")
 
